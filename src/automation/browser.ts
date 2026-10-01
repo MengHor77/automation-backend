@@ -24,11 +24,14 @@ export async function runBrowserTest(
 
     const title = await page.title();
 
-    await page.waitForTimeout(durationSeconds * 1000);
+    await page.waitForTimeout(
+      durationSeconds * 1000,
+    );
 
     return {
       success: true,
-      message: "Browser test completed successfully.",
+      message:
+        "Browser test completed successfully.",
       title,
     };
   } catch (error) {

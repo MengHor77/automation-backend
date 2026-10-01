@@ -1,10 +1,21 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, {
+  Document,
+  Schema,
+} from "mongoose";
+
+// ============================================================
+// JOB STATUS
+// ============================================================
 
 export type AutomationJobStatus =
   | "pending"
   | "running"
   | "completed"
   | "failed";
+
+// ============================================================
+// DOCUMENT INTERFACE
+// ============================================================
 
 export interface IAutomationJob extends Document {
   targetUrl: string;
@@ -15,48 +26,63 @@ export interface IAutomationJob extends Document {
   message?: string;
 }
 
-const automationJobSchema = new Schema<IAutomationJob>(
-  {
-    targetUrl: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+// ============================================================
+// SCHEMA
+// ============================================================
 
-    durationSeconds: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 3600,
-    },
+const automationJobSchema =
+  new Schema<IAutomationJob>(
+    {
+      targetUrl: {
+        type: String,
+        required: true,
+        trim: true,
+      },
 
-    status: {
-      type: String,
-      enum: ["pending", "running", "completed", "failed"],
-      default: "pending",
-    },
+      durationSeconds: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 3600,
+      },
 
-    startedAt: {
-      type: Date,
-    },
+      status: {
+        type: String,
+        enum: [
+          "pending",
+          "running",
+          "completed",
+          "failed",
+        ],
+        default: "pending",
+      },
 
-    completedAt: {
-      type: Date,
-    },
+      startedAt: {
+        type: Date,
+      },
 
-    message: {
-      type: String,
-      trim: true,
-    },
-  },
-  {
-    timestamps: true,
-  },
-);
+      completedAt: {
+        type: Date,
+      },
 
-const AutomationJob = mongoose.model<IAutomationJob>(
-  "AutomationJob",
-  automationJobSchema,
-);
+      message: {
+        type: String,
+        trim: true,
+      },
+    },
+    {
+      timestamps: true,
+    },
+  );
+
+// ============================================================
+// MODEL
+// ============================================================
+
+const AutomationJob =
+  mongoose.model<IAutomationJob>(
+    "AutomationJob",
+    automationJobSchema,
+  );
 
 export default AutomationJob;

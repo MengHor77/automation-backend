@@ -6,6 +6,10 @@ interface CreateAutomationJobInput {
   durationSeconds: number;
 }
 
+// ============================================================
+// CREATE AUTOMATION JOB
+// ============================================================
+
 export async function createAutomationJob(
   input: CreateAutomationJobInput,
 ) {
@@ -15,6 +19,7 @@ export async function createAutomationJob(
     status: "pending",
   });
 
+  // Run the browser test in the background.
   runAutomationJob(job.id).catch((error) => {
     console.error("Automation job failed:", error);
   });
@@ -22,7 +27,13 @@ export async function createAutomationJob(
   return job;
 }
 
-export async function runAutomationJob(jobId: string): Promise<void> {
+// ============================================================
+// RUN AUTOMATION JOB
+// ============================================================
+
+export async function runAutomationJob(
+  jobId: string,
+): Promise<void> {
   const job = await AutomationJob.findById(jobId);
 
   if (!job) {
@@ -31,6 +42,7 @@ export async function runAutomationJob(jobId: string): Promise<void> {
 
   job.status = "running";
   job.startedAt = new Date();
+
   await job.save();
 
   try {
@@ -39,22 +51,31 @@ export async function runAutomationJob(jobId: string): Promise<void> {
       job.durationSeconds,
     );
 
-    job.status = result.success ? "completed" : "failed";
+    job.status = result.success
+      ? "completed"
+      : "failed";
+
     job.message = result.message;
     job.completedAt = new Date();
 
     await job.save();
   } catch (error) {
     job.status = "failed";
+
     job.message =
       error instanceof Error
         ? error.message
         : "Automation job failed.";
+
     job.completedAt = new Date();
 
     await job.save();
   }
 }
+
+// ============================================================
+// GET AUTOMATION JOBS
+// ============================================================
 
 export async function getAutomationJobs() {
   return AutomationJob.find()
